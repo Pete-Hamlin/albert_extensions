@@ -3,7 +3,7 @@ byel := $(bold)$(shell tput setaf 11)
 end := $(shell tput sgr0)
 EXT_DIR=~/.local/share/albert/org.albert.extension.python/modules/
 
-install: wallabag linkding 
+install: wallabag linkding paperless
 	@printf "$(byel)========== Installation Done! ==========$(end)\n"
 
 
@@ -21,4 +21,9 @@ linkding:
 	cp -r src/linkding/ $(EXT_DIR)
 	@test -s $(EXT_DIR)/linkding/config.ini || cp config/linkding/config.ini $(EXT_DIR)/linkding
 
-.PHONY: all wallabag linkding
+paperless:
+	@printf "$(byel)========== Installing paperless ==========$(end)\n"
+	cp -r src/paperless/ $(EXT_DIR)
+	@test -s $(EXT_DIR)/paperless/config.ini || cp config/paperless/config.ini $(EXT_DIR)/paperless
+
+.PHONY: all wallabag linkding paperless
