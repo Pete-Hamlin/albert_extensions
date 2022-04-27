@@ -28,44 +28,9 @@ make wallabag
 
 This will copy over the needed `src` files and create an empty `config.ini` in `~/.local/share/albert/org.albert.extension.python/modules/$EXTENSION/`. See below for extension specific config details.
 
-### Wallabag
-
-You will need an API key pair from wallabag to run. [Here](https://doc.wallabag.org/en/developer/api/readme.html) is the official docs on how to generate the necessary credentials.
-
-#### Config
-
-- `client_id`
-- `client_secret`
-- `username`
-- `password`
-
-All of the above are required as part of the wallabag oauth process. After initial token fetch with credentials, future requests are made using the refresh token
-
-- `base_url`: URL for your wallabag instance
-- `results_per_page` (default: 20): Pagination of queries, increasing this may result in longer queries, but will reduce the number of queries required to refresh articles
-
-### Linkding
-
-You will need your linkding API key to access use this extension. It can be found under Setting → Integrations → Rest API
-
-#### Config
-
-- `api_token`: See above
-- `base_url`: Base URL for your linkding instance
-- `per_page` (default: 100): Pagination of queries, increasing this may result in longer queries, but will reduce the number of queries required to refresh articles
-
-### Paperless-ng
-
-Paperless-ng is accessed via basic auth headers. You have various toggles to determine what you wish to parse when looking for a query match included in the config
-
-#### Config
-
-- `username`: Login credentials
-- `password`: Login credentials
-- `base_url`: BAse URl of your paperless instance
-- `search_body` (defalt: false): If this is `true` document body will be parsed to check for a query match (may slow down query process)
-- `parse_tags` (default: true): If this is `true` document tags will be parsed to check for a query match (may slow down query process)
-- `parse_document_type` (default: true): If this is `true` document type will be parsed to check for a query match (may slow down query process)
+- [linkding](./doc/linkding.md)
+- [paperless](./doc/paperless.md)
+- [wallabag](./doc/wallabag.md)
 
 ## Caveats
 
