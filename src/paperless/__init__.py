@@ -16,7 +16,7 @@ import requests
 from albert import *
 
 __title__ = "paperless"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __triggers__ = "pl "
 __authors__ = "Pete Hamlin"
 
@@ -66,9 +66,10 @@ def show_documents(query) -> List[Item]:
                     subtext=subtext,
                     completion=f"{__triggers__} {query.string}",
                     actions=[
-                        UrlAction(text="Preview in browser", url=preview_url),
+                        FuncAction("Download Document", callable=lambda url=download_url: download_file(url)),
+                        # UrlAction(text="Download Document", url=download_url),
+                        UrlAction(text="Open Document in browser", url=preview_url),
                         ClipAction(text="Copy Preview URL", clipboardText=preview_url),
-                        UrlAction(text="Download Document", url=download_url),
                         ClipAction(text="Copy Download URL", clipboardText=download_url),
                     ],
                 )
@@ -91,12 +92,25 @@ def filter_query(query_string: str, filters: List[str]) -> bool:
             return True
     return False
 
+def download_file(url: str) -> None:
+    response = requests.get(url, timeout=5, auth=(config.username, config.password))
+    if response.ok:
+        header = response.headers.get("Content-Disposition").split('filename=')[1] or "albert_paperless_dl.pdf"
+        local_name = os.path.expanduser("{}/{}".format(config.download_path, header).replace('"', ''))
+        with open(local_name, "wb") as dl_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                dl_file.write(chunk)
+        os.system(f"xdg-open '{local_name}'")
+
+
+
 
 class ApiConfig:
     def __init__(self, config) -> None:
         self.username = config["username"]
         self.password = config["password"]
         self.base_url = config["base_url"]
+        self.download_path = config["download_path"]
         self.search_body = config.getboolean("search_body")
         self.parse_tags = config.getboolean("parse_tags")
         self.parse_document_type = config.getboolean("parse_document_type")
