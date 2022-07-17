@@ -38,7 +38,7 @@ def handleQuery(query):
         query.disableSort()
         if query.string.strip().startswith("search"):
             for card in find_cards(query.string.strip()[6:]):
-                if "Basic" in card["modelName"]:
+                if "Basic" in card["modelName"] and not config.force_custom_formats:
                     # Assume all basic types have front/back fields (could be dangerous, but hey)
                     front, back = "Front", "Back"
                 else:
