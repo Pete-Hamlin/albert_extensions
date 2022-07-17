@@ -7,7 +7,7 @@ install: wallabag linkding paperless
 	@printf "$(byel)========== Installation Done! ==========$(end)\n"
 
 
-test: wallabag
+test: anki
 	@printf "$(byel)========== Starting Albert ==========$(end)\n"
 	albert
 
@@ -26,4 +26,10 @@ paperless:
 	cp -r src/paperless/ $(EXT_DIR)
 	@test -s $(EXT_DIR)/paperless/config.ini || cp config/paperless/config.ini $(EXT_DIR)/paperless
 
-.PHONY: all wallabag linkding paperless
+anki:
+	@printf "$(byel)========== Installing anki ==========$(end)\n"
+	cp -r src/anki/ $(EXT_DIR)
+	@test -s $(EXT_DIR)/anki/config.ini || cp config/anki/config.ini $(EXT_DIR)/anki
+
+
+.PHONY: all wallabag linkding paperless anki
