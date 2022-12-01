@@ -40,22 +40,24 @@ def handleQuery(query):
 def show_articles(query) -> List[Item]:
     results = []
     for article in config.get_articles():
-        title = article["title"]
+        article_id, title, article_url = article["id"], article["title"], article["url"]
         tags = ", ".join([tag for tag in article["tag_names"]])
-        if filter_query(query.string, [title, tags, article["url"]]):
+        if filter_query(query.string, [title, tags, article_url]):
             debug(f"Got article: {title} - query string {query.string}")
-            subtext = "{}: {}".format(tags, article["url"])
+            subtext = "{}: {}".format(tags, article_url)
             results.append(
                 Item(
                     id=__title__,
                     icon=iconPath,
-                    text=title or article["website_title"] or article["url"],
+                    text=title or article["website_title"] or article_url,
                     subtext=subtext,
                     completion=f"{__triggers__} {query.string}",
                     actions=[
-                        UrlAction(text="Open in browser", url=article["url"]),
-                        ClipAction(text="Copy URL",
-                                   clipboardText=article["url"]),
+                        UrlAction(text="Open link in browser", url=article_url),
+                        ClipAction(text="Copy link URL",
+                                   clipboardText=article_url),
+                        FuncAction(text="Archive link", callable=lambda link_id=article_id: archive_link(link_id))
+                        FuncAction(text="Delete link", callable=lambda link_id=article_id: delete_link(link_id))
                     ],
                 )
             )
@@ -77,6 +79,22 @@ def filter_query(query_string: str, filters: List[str]) -> bool:
             return True
     return False
 
+def delete_link(link_id: str):
+    url = f"{config.base_url}/api/bookmarks/{link_id}"
+    response = requests.delete(url, headers=config.headers)
+    if not response.ok:
+        error("Got response {}".format(response))
+
+def archive_link(link_id: str):
+    url = f"{config.base_url}/api/bookmarks/{link_id}/archive/"
+    post_request(url)
+
+def post_request(url: str):
+    response = requests.post(url, headers=config.headers)
+    if response.ok:
+        return response.json()
+    else:
+        error("Got response {}".format(response))
 
 class ApiConfig:
     def __init__(self, config) -> None:
@@ -118,3 +136,6 @@ class ApiConfig:
 
     def _get_params(self):
         return "&".join(f"{key}={value}" for key, value in self.params.items())
+
+
+
