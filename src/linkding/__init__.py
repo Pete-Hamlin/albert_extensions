@@ -16,7 +16,7 @@ import requests
 from albert import *
 
 __title__ = "Linkding"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __triggers__ = "ld "
 __authors__ = "Pete Hamlin"
 
