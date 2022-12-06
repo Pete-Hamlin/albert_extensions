@@ -20,8 +20,7 @@ __version__ = "0.1.1"
 __triggers__ = "ld "
 __authors__ = "Pete Hamlin"
 
-iconPath = iconLookup("linkding") or os.path.dirname(
-    __file__) + "/linkding.png"
+iconPath = iconLookup("linkding") or os.path.dirname(__file__) + "/linkding.png"
 user_agent = "org.albert.extension.python.linkding"
 
 
@@ -55,10 +54,15 @@ def show_articles(query) -> List[Item]:
                     completion=f"{__triggers__} {query.string}",
                     actions=[
                         UrlAction(text="Open link in browser", url=article_url),
-                        ClipAction(text="Copy link URL",
-                                   clipboardText=article_url),
-                        FuncAction(text="Archive link", callable=lambda link_id=article_id: archive_link(link_id)),
-                        FuncAction(text="Delete link", callable=lambda link_id=article_id: delete_link(link_id)),
+                        ClipAction(text="Copy link URL", clipboardText=article_url),
+                        FuncAction(
+                            text="Archive link",
+                            callable=lambda link_id=article_id: archive_link(link_id),
+                        ),
+                        FuncAction(
+                            text="Delete link",
+                            callable=lambda link_id=article_id: delete_link(link_id),
+                        ),
                     ],
                 )
             )
@@ -70,8 +74,12 @@ def show_articles(query) -> List[Item]:
                 text="No articles found",
                 actions=[
                     UrlAction(text="Open linkding", url=config.base_url),
-                    FuncAction(text="Refresh Articles", callable=config.refresh_articles),
-                ])),
+                    FuncAction(
+                        text="Refresh Articles", callable=config.refresh_articles
+                    ),
+                ],
+            )
+        ),
     return results
 
 
@@ -80,6 +88,7 @@ def filter_query(query_string: str, filters: List[str]) -> bool:
         if query_string in item.lower():
             return True
     return False
+
 
 def delete_link(link_id: str):
     url = f"{config.base_url}/api/bookmarks/{link_id}"
@@ -90,9 +99,11 @@ def delete_link(link_id: str):
     else:
         warn("Got response {}".format(response))
 
+
 def archive_link(link_id: str):
     url = f"{config.base_url}/api/bookmarks/{link_id}/archive/"
     post_request(url)
+
 
 def post_request(url: str):
     debug("About to POST {}".format(url))
@@ -101,6 +112,7 @@ def post_request(url: str):
         return response.json()
     else:
         warn("Got response {}".format(response))
+
 
 class ApiConfig:
     def __init__(self, config) -> None:
@@ -137,11 +149,8 @@ class ApiConfig:
             result = response.json()
             return result["results"], result["next"]
         else:
-            debug('Got response {}'.format(response))
+            debug("Got response {}".format(response))
             return [], ""
 
     def _get_params(self):
         return "&".join(f"{key}={value}" for key, value in self.params.items())
-
-
-
